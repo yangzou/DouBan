@@ -18,9 +18,9 @@ class DouBanMovieCrawler:
                 r = requests.get(url).json()
 
                 if('msg' in r and r.get('msg').startswith('rate_limit_exceeded')):
-                    print 'API limit reached. Will sleep 2 minutes'
-                    print 'Response:' + json.dumps(r)
-                    time.sleep(2*60)
+                    print ('API limit reached. Will sleep 30 minutes')
+                    print ('Response: %s' % json.dumps(r))
+                    time.sleep(30*60)
                     continue
 
                 if (totalNumber == -1):
@@ -29,7 +29,7 @@ class DouBanMovieCrawler:
 
                 # Increment the start count so that next search will start from where the previous search ends
                 start += int(r.get('count'))
-                print 'Got %s movies, total %s' %(start, totalNumber)
+                print ('Got %s movies, total %s' %(start, totalNumber))
 
                 movies = r.get('subjects')
                 for movie in movies:
@@ -38,27 +38,17 @@ class DouBanMovieCrawler:
                         interestingMovies.append(movie)
 
             except:
-                print 'Exception: ' + str(sys.exc_info())
-                print json.dumps(curr, sort_keys=True, indent=4)
+                print ('Exception: %s' % str(sys.exc_info()))
+                print (json.dumps(curr, sort_keys=True, indent=4))
 
-        print 'Found %s interesting movies' %len(interestingMovies)
-        print 'Output file: output.json'
+        print ('Found %s interesting movies' %len(interestingMovies))
+        print ('Output file: output.json')
 
         with open('output.json', 'w') as outfile:
             json.dump(interestingMovies, outfile, indent=4, sort_keys=True);
 
         # End of crawlMovies
-
-    def GetMovieInfo(self):
-        # Get Movie Ids from output.json
-        movies = json.load(open('output.json'))
-        for movie in movies:
-            apiSuccess = False
-            while !apiSuccess:
-                try:
-                    url = "https://api.douban.com/v2/movie"
-
 # End of DouBanMovieCrawler class
 
 crawler = DouBanMovieCrawler()
-crawler.crawlMovies(2017, 1000)
+crawler.crawlMovies(2015, 1000)
